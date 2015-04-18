@@ -23,8 +23,6 @@ Directory structure
     .
     |-- doc                 Documentation
     |-- examples            Examples
-    |   |-- mysql2hdfs      Example application replicating rows to HDFS
-    |   `-- mysql2lucene    Example application replicating rows to SOLR
     |-- include             Include files
     |-- src                 Source files for library
     `-- tests               Unit test files and directories
@@ -106,18 +104,3 @@ build. If there exists a module FindJNI.cmake in the CMAKE_MODULE_PATH and
 JAVA_HOME is set; the headers will be included, and the libraries would be
 linked to. If not, it will be required to include the headers and load the
 libraries separately (modify LD_LIBRARY_PATH).
-
-Building the mysql2lucene Example
----------------------------------
-
-To build the mysql2lucene example, it is necessary to ensure that the
-'FindCLucene.cmake' is in the CMAKE_MODULE_PATH, which on my machine
-require me to write:
-
-    cmake . -DCMAKE_MODULE_PATH:String=/usr/share/kde4/apps/cmake/modules
-
-In addition, there is a bug in the packaging of CLucene on Ubuntu in
-that the 'clucene-config.h' file is placed in '/usr/lib/CLucene' but
-not in '/usr/include/CLucene', causing compiler failure when
-attempting to use CLucene. The 'CMakeLists.txt' file hacks around this
-by adding the libraries explicitly, but it seems unnecessary.
