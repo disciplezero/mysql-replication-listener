@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 #include <my_global.h>
 #include <mysql.h>
 #include <m_ctype.h>
-#include <sql_common.h>
+//#include <sql_common.h>
 #include <list>
 
 #define BINLOG_CHECKSUM_LEN 4
@@ -328,7 +328,7 @@ std::istream &operator>>(std::istream &is, Protocol_chunk_string &str);
  *
  * @return the size of the packet or 0 to indicate an error
  */
-int proto_get_one_package(MYSQL *mysql, char *buff, uint8_t *packet_no);
+//int proto_get_one_package(MYSQL *mysql, char *buff, uint8_t *packet_no);
 void prot_parse_error_message(std::istream &is, struct st_error_package &err,
                               int packet_length);
 void prot_parse_ok_message(std::istream &is, struct st_ok_package &ok,

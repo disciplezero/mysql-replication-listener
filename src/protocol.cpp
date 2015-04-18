@@ -63,6 +63,7 @@ int check_checksum_value(mysql::Binary_log_event **event)
 }
 
 
+/*
 int proto_get_one_package(MYSQL *mysql, char *buff,
                            uint8_t *packet_no)
 {
@@ -71,6 +72,7 @@ int proto_get_one_package(MYSQL *mysql, char *buff,
   buff= (char*)mysql->net.buff;
   return packet_length;
 }
+*/
 
 void prot_parse_error_message(std::istream &is, struct st_error_package &err,
                               int packet_length)

@@ -18,70 +18,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 02110-1301  USA
 */
 #include "access_method_factory.h"
-#include "tcp_driver.h"
 #include "file_driver.h"
 
 using mysql::system::Binary_log_driver;
-using mysql::system::Binlog_tcp_driver;
 using mysql::system::Binlog_file_driver;
-
-/**
-   Parse the body of a MySQL URI.
-
-   The format is <code>user[:password]@host[:port]</code>
-*/
-static Binary_log_driver *parse_mysql_url(const char *body, size_t len)
-{
-  /* Find the beginning of the user name */
-  if (strncmp(body, "//", 2) != 0)
-    return 0;
-
-  /* Find the user name, which is mandatory */
-  const char *user = body + 2;
-  const char *user_end= strpbrk(user, ":@");
-  if (user_end == 0 || user_end == user)
-    return 0;
-  assert(user_end - user >= 1);          // There has to be a username
-
-  /* Find the password, which can be empty */
-  assert(*user_end == ':' || *user_end == '@');
-  const char *const pass = user_end + 1;        // Skip the ':' (or '@')
-  const char *pass_end = pass;
-  if (*user_end == ':')
-  {
-    pass_end = strchr(pass, '@');
-    if (pass_end == 0)
-      return 0;       // There should be a password, but '@' was not found
-  }
-  assert(pass_end - pass >= 0);               // Password can be empty
-
-  /* Find the host name, which is mandatory */
-  // Skip the '@', if there is one
-  const char *host = *pass_end == '@' ? pass_end + 1 : pass_end;
-  const char *host_end = strchr(host, ':');
-  if (host == host_end)
-    return 0;                                 // No hostname was found
-  /* If no ':' was found there is no port, so the host end at the end
-   * of the string */
-  if (host_end == 0)
-    host_end = body + len;
-  assert(host_end - host >= 1);              // There has to be a host
-
-  /* Find the port number */
-  uint portno = 3306;
-  if (*host_end == ':')
-    portno = strtoul(host_end + 1, NULL, 10);
-
-  /* Host name is now the string [host, port-1) if port != NULL and
-     [host, EOS) otherwise.
-  */
-  /* Port number is stored in portno, either the default, or a parsed one */
-  return new Binlog_tcp_driver(std::string(user, user_end - user),
-                               std::string(pass, pass_end - pass),
-                               std::string(host, host_end - host),
-                               portno);
-}
-
 
 static Binary_log_driver *parse_file_url(const char *body, size_t length)
 {
@@ -111,7 +51,6 @@ struct Parser {
    Array of schema names and matching parsers.
 */
 static Parser url_parser[] = {
-  { "mysql", parse_mysql_url },
   { "file",  parse_file_url },
 };
 
